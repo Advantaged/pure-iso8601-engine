@@ -27,9 +27,22 @@ This engine resolves these structural limitations using a three-stage automated 
 Clone the repository and run the self-contained installation manifest:
 
 ```bash
-git clone [https://github.com/yourusername/pure-iso8601-engine.git](https://github.com/yourusername/pure-iso8601-engine.git](https://github.com/Advantaged/pure-iso8601-engine.git)
+git clone https://github.com/Advantaged/pure-iso8601-engine.git
 cd pure-iso8601-engine
 chmod +x install-iso-locale.sh
 sudo ./install-iso-locale.sh
 ```
+
+### Runtime Integration Vectors
+
+Upon completion, the installer provides three compliance execution options:
+1. **Live Hot-Reload:** Completely unsets active parent shell environment boundaries, sources the central system profile subsystems (`/etc/profile.d/locale.sh`), drops micro-service reload rules for running daemons, and verifies integrity using a standalone Perl parsing sequence.
+2. **Session Termination:** Dynamically queries `loginctl` to locate all active graphical attachment matrices belonging to the user, terminates the session trees cleanly to save active states, and issues a hard-restart command to the display manager/session layer (`plasmalogin`).
+3. **Staged Configuration:** Writes the baseline profiles smoothly into `/etc/locale.conf` and the local user spaces to apply cleanly on the next physical hardware initialization loop.
+
+## Compliance Standards
+* **Architect & Author:** Tony Advantaged
+* **Date Metrics:** ISO 8601 (`YYYY-MM-DD HH:MM:SS`)
+* **Numerical/Monetary Standards:** `de_DE` Metric Mapping
+* **Documentation Architecture:** ISO 9001 Compliant Systems Specification
 .
