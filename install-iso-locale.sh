@@ -75,6 +75,21 @@ TARGET_TERRITORY="${STEALTH_LOCALE#*_}"
 # 3. DYNAMIC INLINE GENERATION OF THE UNIFIED BLUEPRINT
 # ==============================================================================
 echo "=> Building customized locale definition blueprint..."
+
+# Extraction routine to bypass the rigid glibc copy macro ban
+SRC_LOCALE_FILE="/usr/share/i18n/locales/${SRC_TIME}"
+if [ ! -f "$SRC_LOCALE_FILE" ]; then
+    SRC_LOCALE_FILE="/usr/share/i18n/locales/$(echo "${SRC_TIME}" | cut -d@ -f1)"
+fi
+
+if [ -f "$SRC_LOCALE_FILE" ]; then
+    NATIVE_DAYS=$(sed -n '/^LC_TIME/,/^END LC_TIME/p' "$SRC_LOCALE_FILE" | grep -E '^(abday|day)[[:space:]]')
+    NATIVE_MONTHS=$(sed -n '/^LC_TIME/,/^END LC_TIME/p' "$SRC_LOCALE_FILE" | grep -E '^(abmon|mon)[[:space:]]')
+else
+    NATIVE_DAYS=$'abday   "Sun";"Mon";"Tue";"Wed";"Thu";"Fri";"Sat"\nday     "Sunday";"Monday";"Tuesday";"Wednesday";"Thursday";"Friday";"Saturday"'
+    NATIVE_MONTHS=$'abmon   "Jan";"Feb";"Mar";"Apr";"May";"Jun";"Jul";"Aug";"Sep";"Oct";"Nov";"Dec"\nmon     "January";"February";"March";"April";"May";"June";"July";"August";"September";"October";"November";"December"'
+fi
+
 cat << EOF > "$SOURCE_BLUEPRINT"
 comment_char %
 escape_char /
@@ -94,8 +109,8 @@ tel        ""
 fax        ""
 language   "English"
 territory  "${TARGET_TERRITORY}"
-revision   "1.2"
-date       "2026-05-31"
+revision   "1.3"
+date       "2026-06-01"
 category  "i18n:2012";value;LC_IDENTIFICATION
 END LC_IDENTIFICATION
 
@@ -116,8 +131,9 @@ copy "${SRC_NUMERIC}"
 END LC_NUMERIC
 
 LC_TIME
-% Inherit current day/month naming strings from the active time configuration
-copy "${SRC_TIME}"
+% Injecting raw language definitions cleanly to avoid the glibc copy error
+${NATIVE_DAYS}
+${NATIVE_MONTHS}
 
 % Surgically overwrite specific temporal rendering targets for strict ISO metrics
 d_t_fmt "%Y-%m-%d %H:%M:%S"
