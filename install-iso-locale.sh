@@ -248,4 +248,5 @@ cp "$0" "${LOLS_DIR}/install-iso-locale.sh" 2>/dev/null || true
 chmod +x "${LOLS_DIR}/install-iso-locale.sh" 2>/dev/null || true
 
 echo "=> Script execution complete. Arch-subsystem configuration successfully targeted."
+
 #
