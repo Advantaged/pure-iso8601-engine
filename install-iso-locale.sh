@@ -297,7 +297,7 @@ case "$action" in
         loginctl terminate-user "$REAL_USER"
         systemctl restart plasmalogin.service 2>/dev/null || systemctl restart sddm.service 2>/dev/null
         ;;
-    (3))
+    (3)
         echo "=> Changes staged. Will execute safely on your next normal reboot."
         ;;
 esac
