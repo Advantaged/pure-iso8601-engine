@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 
-# Enforce root privileges for compilation and hook generation
+%  Custom ISO-8601 Engine Blueprint (Tony Advantaged)
+%  Strict glibc compilation compliance template
+
 if [ "$EUID" -ne 0 ]; then
   echo "Error: This installer must be run as root (sudo)."
   exit 1
 fi
 
 # ==============================================================================
-# 1. DYNAMIC USER INFRASTRUCTURE & MATRIX DISCOVERY
+# 1. DYNAMIC SYSTEM MATRIX DISCOVERY
 # ==============================================================================
 REAL_USER="${SUDO_USER:-$USER}"
 if [ "$REAL_USER" = "root" ]; then
@@ -17,7 +19,6 @@ USER_HOME=$(eval echo "~$REAL_USER")
 LOLS_DIR="${USER_HOME}/.config/LOLS"
 SOURCE_BLUEPRINT="${LOLS_DIR}/en_ISO.locale"
 
-# Sifting routine to isolate and clean raw locale values
 get_clean_locale() {
     local val
     val=$(locale | grep "^${1}=" | cut -d= -f2 | tr -d '"' | cut -d. -f1)
@@ -30,7 +31,6 @@ get_clean_locale() {
     echo "$val"
 }
 
-# Extract the entire active environment matrix individually
 SRC_LANG=$(get_clean_locale "LANG")
 SRC_CTYPE=$(get_clean_locale "LC_CTYPE")
 SRC_NUMERIC=$(get_clean_locale "LC_NUMERIC")
@@ -44,12 +44,6 @@ SRC_ADDRESS=$(get_clean_locale "LC_ADDRESS")
 SRC_TELEPHONE=$(get_clean_locale "LC_TELEPHONE")
 SRC_MEASUREMENT=$(get_clean_locale "LC_MEASUREMENT")
 
-echo "=========================================================="
-echo " Starting Universal ISO-8601 Engine Configuration"
-echo "=========================================================="
-echo "=> Active Environment Matrix Discovered:"
-echo "   Language: $SRC_LANG | Numeric: $SRC_NUMERIC | Time Base: $SRC_TIME"
-
 if [ -d "$LOLS_DIR" ]; then
     rm -rf "${LOLS_DIR:?}"/*
 else
@@ -57,7 +51,7 @@ else
 fi
 
 # ==============================================================================
-# 2. SMART LOCALE SELECTION (Anti-Collision Protocol)
+# 2. STEALTH CONTAINER VEHICLE SELECTION
 # ==============================================================================
 STEALTH_LOCALE="en_IE"
 current_time_locale=$(env | grep LC_TIME | cut -d= -f2 | cut -d. -f1)
@@ -68,13 +62,27 @@ elif [[ "$current_time_locale" == "en_GB" ]]; then
     STEALTH_LOCALE="en_AU"
 fi
 
-echo "=> Target stealth system container selected: ${STEALTH_LOCALE}"
 TARGET_TERRITORY="${STEALTH_LOCALE#*_}"
 
 # ==============================================================================
-# 3. DYNAMIC INLINE GENERATION OF THE UNIFIED BLUEPRINT
+# 3. SURGICAL EXTRACTION OF TEXT STRINGS (Defeating glibc copy bugs)
 # ==============================================================================
-echo "=> Building customized locale definition blueprint..."
+SRC_LOCALE_FILE="/usr/share/i18n/locales/${SRC_TIME}"
+if [ ! -f "$SRC_LOCALE_FILE" ]; then
+    SRC_LOCALE_FILE="/usr/share/i18n/locales/$(echo "${SRC_TIME}" | cut -d@ -f1)"
+fi
+
+if [ -f "$SRC_LOCALE_FILE" ]; then
+    NATIVE_DAYS=$(sed -n '/^LC_TIME/,/^END LC_TIME/p' "$SRC_LOCALE_FILE" | grep -E '^(abday|day)[[:space:]]')
+    NATIVE_MONTHS=$(sed -n '/^LC_TIME/,/^END LC_TIME/p' "$SRC_LOCALE_FILE" | grep -E '^(abmon|mon)[[:space:]]')
+else
+    NATIVE_DAYS=$'abday   "Sun";"Mon";"Tue";"Wed";"Thu";"Fri";"Sat"\nday     "Sunday";"Monday";"Tuesday";"Wednesday";"Thursday";"Friday";"Saturday"'
+    NATIVE_MONTHS=$'abmon   "Jan";"Feb";"Mar";"Apr";"May";"Jun";"Jul";"Aug";"Sep";"Oct";"Nov";"Dec"\nmon     "January";"February";"March";"April";"May";"June";"July";"August";"September";"October";"November";"December"'
+fi
+
+# ==============================================================================
+# 4. BLUEPRINT COMPILATION WITH STRICT GLIBC COMMENT METRICS
+# ==============================================================================
 cat << EOF > "$SOURCE_BLUEPRINT"
 comment_char %
 escape_char /
@@ -94,8 +102,8 @@ tel        ""
 fax        ""
 language   "English"
 territory  "${TARGET_TERRITORY}"
-revision   "1.2"
-date       "2026-05-31"
+revision   "1.3"
+date       "2026-06-01"
 category  "i18n:2012";value;LC_IDENTIFICATION
 END LC_IDENTIFICATION
 
@@ -116,10 +124,11 @@ copy "${SRC_NUMERIC}"
 END LC_NUMERIC
 
 LC_TIME
-% Inherit current day/month naming strings from the active time configuration
-copy "${SRC_TIME}"
+% Native text calendar structures injected manually from background profiles
+${NATIVE_DAYS}
+${NATIVE_MONTHS}
 
-% Surgically overwrite specific temporal rendering targets for strict ISO metrics
+% Surgical overwrite of temporal rendering blocks for explicit ISO metrics
 d_t_fmt "%Y-%m-%d %H:%M:%S"
 d_fmt   "%Y-%m-%d"
 t_fmt   "%H:%M:%S"
@@ -159,15 +168,11 @@ chown -R "${REAL_USER}:${REAL_USER}" "$LOLS_DIR"
 chmod 644 "$SOURCE_BLUEPRINT"
 
 # ==============================================================================
-# 4. DEFUSE POTENTIAL IMMUTABLE FLAGS (+i)
+# 5. INJECT INTO SYSTEM DIRECTORIES AND RUN BINARY LOCALEDEF
 # ==============================================================================
 [ -f /etc/locale.conf ] && chattr -i /etc/locale.conf
 [ -f "${USER_HOME}/.config/plasma-localerc" ] && chattr -i "${USER_HOME}/.config/plasma-localerc"
-[ -f /root/.config/plasma-localerc ] && chattr -i /root/.config/plasma-localerc
 
-# ==============================================================================
-# 5. CONFIGURE /etc/locale.gen & SYSTEM COMPILATION
-# ==============================================================================
 if [ -f /etc/locale.gen ]; then
     sed -i "/^#\?${STEALTH_LOCALE}.UTF-8/d" /etc/locale.gen
     echo "${STEALTH_LOCALE}.UTF-8 UTF-8" >> /etc/locale.gen
@@ -180,7 +185,7 @@ rm -rf "/usr/lib/locale/${STEALTH_LOCALE}.utf8" "/usr/lib/locale/${STEALTH_LOCAL
 localedef -i "$STEALTH_LOCALE" -f UTF-8 "${STEALTH_LOCALE}.UTF-8"
 
 # ==============================================================================
-# 6. WRITE GLOBAL SYSTEM CONFIGURATIONS (Preserving exact user layouts)
+# 6. ENFORCE SYSTEM EMBEDDED PATHS
 # ==============================================================================
 cat << EOF > /etc/locale.conf
 LANG=${SRC_LANG}.UTF-8
@@ -198,9 +203,6 @@ LC_MEASUREMENT=${SRC_MEASUREMENT}.UTF-8
 LC_IDENTIFICATION=${SRC_LANG}.UTF-8
 EOF
 
-# ==============================================================================
-# 7. WRITE DE GRAPHICAL COMPONENT CONFIGURATIONS (KDE Plasma Native Hybrid Logic)
-# ==============================================================================
 write_plasma_config() {
   local target_path="$1"
   mkdir -p "$(dirname "$target_path")"
@@ -225,12 +227,9 @@ write_plasma_config "${USER_HOME}/.config/plasma-localerc"
 write_plasma_config "/root/.config/plasma-localerc"
 chown "${REAL_USER}:${REAL_USER}" "${USER_HOME}/.config/plasma-localerc"
 
-# ==============================================================================
-# 8. AUTOMATED CROSS-DISTRIBUTION HOOK INJECTION
-# ==============================================================================
-if command -v pacman &> /dev/null; then
-    mkdir -p /etc/pacman.d/hooks
-    cat << EOF > /etc/pacman.d/hooks/99-update-iso-locale.hook
+# Auto-deploy the ALPM pacman core hook for Arch/CachyOS updates
+mkdir -p /etc/pacman.d/hooks
+cat << 'EOF' > /etc/pacman.d/hooks/99-update-iso-locale.hook
 [Trigger]
 Operation = Install
 Operation = Upgrade
@@ -239,65 +238,15 @@ Target = glibc
 Target = glibc-locales
 
 [Action]
-Description = Re-compiling custom ISO-8601 system locale configurations...
+Description = Re-compiling custom ISO-8601 system locale configurations via Pacman Hook...
 When = PostTransaction
 Depends = bash
 Exec = /bin/bash -c "HOME_DIR=\$(awk -v uid=1000 -F: '\$3==uid {print \$6}' /etc/passwd); /bin/bash \${HOME_DIR}/.config/LOLS/install-iso-locale.sh"
 EOF
 
-elif command -v apt-get &> /dev/null; then
-    cat << EOF > /etc/apt/apt.conf.d/99-update-iso-locale
-DPkg::Post-Invoke { "HOME_DIR=\$(awk -v uid=1000 -F: '\$3==uid {print \$6}' /etc/passwd); /bin/bash \${HOME_DIR}/.config/LOLS/install-iso-locale.sh"; };
-EOF
+cp "$0" "${LOLS_DIR}/install-iso-locale.sh" 2>/dev/null || true
+chmod +x "${LOLS_DIR}/install-iso-locale.sh" 2>/dev/null || true
 
-elif command -v dnf &> /dev/null || command -v dnf5 &> /dev/null; then
-    mkdir -p /etc/dnf/plugins/post-transaction-actions.d
-    cat << EOF > /etc/dnf/plugins/post-transaction-actions.d/iso-locale.action
-glibc:any:${USER_HOME}/.config/LOLS/install-iso-locale.sh
-glibc-langpack-en:any:${USER_HOME}/.config/LOLS/install-iso-locale.sh
-EOF
-fi
+echo "=> Script execution complete. Arch-subsystem configuration successfully targeted."
 
-# ==============================================================================
-# 9. EXECUTION HANDLER
-# ==============================================================================
-echo "----------------------------------------------------------"
-echo "✓ Installation complete. How do you want to apply changes?"
-echo "----------------------------------------------------------"
-echo " [1] Apply live reload on the fly (Drops boundary & re-sources context)."
-echo " [2] Force-logout session instantly (Restarts Plasma shell)."
-echo " [3] Do nothing (Keep states, let hardware reboot handle it)."
-read -r -p "Selection [1-3]: " action
-
-case "$action" in
-    (1)
-        echo "=> Dropping active environment boundary..."
-        unset LANG
-        
-        echo "=> Sourcing the initialization subsystem..."
-        if [ -f /etc/profile.d/locale.sh ]; then
-            source /etc/profile.d/locale.sh
-        fi
-
-        if command -v cachyos-rate-mirrors &>/dev/null || [ -f /usr/bin/needs-restarting ]; then
-            echo "=> Dispatching micro-service reloading rules..."
-            systemctl daemon-reload 2>/dev/null
-        fi
-        
-        echo "=> Verification: Active Environment Output:"
-        locale
-        
-        echo "=> Verification: Performing Perl structural dry-run..."
-        perl -e 'print "System Integrity: Clear\n"'
-        ;;
-    (2)
-        echo "=> Halting graphical shell structures cleanly..."
-        SESSION_IDS=$(loginctl list-sessions --no-legend | awk -v u="$REAL_USER" '$3==u {print $1}')
-        for id in $SESSION_IDS; do loginctl terminate-session "$id"; done
-        loginctl terminate-user "$REAL_USER"
-        systemctl restart plasmalogin.service 2>/dev/null || systemctl restart sddm.service 2>/dev/null
-        ;;
-    *)
-        echo "=> Changes staged. Will execute safely on your next normal reboot."
-        ;;
-esac
+#
